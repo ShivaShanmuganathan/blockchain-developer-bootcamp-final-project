@@ -1,6 +1,10 @@
-# Basic Sample Hardhat Project
+# NFT Mini Game 
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+## Play on -> https://nft-game-starter-project.shivashanmugana.repl.co/
+
+
+### This is a simple NFT Based Mini Game that allows users to mint Valorant Heroes as an NFT, and use their NFT to fight against Thanos. Battling with Thanos changes the HP (metadata) on NFT.
+
 
 Try running some of the following tasks:
 
