@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
 // Helper we wrote to encode in Base64
 import "./libraries/Base64.sol";
@@ -11,11 +11,15 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
+// Access Control Functions
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+
 
 
 import "hardhat/console.sol";
 
-contract MyEpicGame is ERC721 {
+contract MyEpicGame is ERC721, Ownable{
   // We'll hold our character's attributes in a struct. Feel free to add
   // whatever you'd like as an attribute! (ex. defense, crit chance, etc).
   struct CharacterAttributes {
@@ -25,8 +29,7 @@ contract MyEpicGame is ERC721 {
     uint hp;
     uint maxHp;
     uint attackDamage;
-    string defaultAbility;
-    string ultimateAbility;
+    
   }
 
   using Counters for Counters.Counter;
@@ -57,18 +60,18 @@ contract MyEpicGame is ERC721 {
   event AttackComplete(uint newBossHp, uint newPlayerHp);
 
 
+  uint256 fee = 0.01 ether;
 
   // Data passed in to the contract when it's first created initializing the characters.
   // We're going to actually pass these values in from from run.js.
   
   constructor(
+    // These new variables would be passed in via run.js or deploy.js.
     string[] memory characterNames,
     string[] memory characterImageURIs,
     uint[] memory characterHp,
     uint[] memory characterAttackDmg,
-    string[] memory characterAbility,
-    string[] memory characterUltimate,
-    string memory bossName, // These new variables would be passed in via run.js or deploy.js.
+    string memory bossName, 
     string memory bossImageURI,
     uint bossHp,
     uint bossAttackDamage
@@ -95,23 +98,30 @@ contract MyEpicGame is ERC721 {
         imageURI: characterImageURIs[i],
         hp: characterHp[i],
         maxHp: characterHp[i],
-        attackDamage: characterAttackDmg[i],
-        defaultAbility: characterAbility[i],
-        ultimateAbility: characterUltimate[i]
+        attackDamage: characterAttackDmg[i]
       }));
 
-      CharacterAttributes memory c = defaultCharacters[i];
-      console.log("Done initializing %s w/ DefaultAbility %s, UltimateAbility %s", c.name, c.defaultAbility, c.ultimateAbility);
+      
     }
     _tokenIds.increment();
+  }
+  
+  function updateFee(uint256 _fee) external onlyOwner {
+    fee = _fee;
+  }
+
+  function withdraw() external payable onlyOwner {
+    address payable _owner = payable(owner());
+    _owner.transfer(address(this).balance);
   }
 
 
 
-  function mintCharacterNFT(uint _characterIndex) external {
+  function mintCharacterNFT(uint _characterIndex) external payable{
+    require(msg.value >= fee);
     uint256 newItemId = _tokenIds.current();
 
-    _safeMint(msg.sender, newItemId);
+    _safeMint (msg.sender, newItemId);
 
     nftHolderAttributes[newItemId] = CharacterAttributes({
       characterIndex: _characterIndex,
@@ -119,9 +129,8 @@ contract MyEpicGame is ERC721 {
       imageURI: defaultCharacters[_characterIndex].imageURI,
       hp: defaultCharacters[_characterIndex].hp,
       maxHp: defaultCharacters[_characterIndex].hp,
-      attackDamage: defaultCharacters[_characterIndex].attackDamage,
-      defaultAbility: defaultCharacters[_characterIndex].defaultAbility,
-      ultimateAbility: defaultCharacters[_characterIndex].ultimateAbility
+      attackDamage: defaultCharacters[_characterIndex].attackDamage
+      
     });
 
     console.log("Minted NFT w/ tokenId %s and characterIndex %s", newItemId, _characterIndex);  
@@ -136,36 +145,36 @@ contract MyEpicGame is ERC721 {
 
   function tokenURI(uint256 _tokenId) public view override returns (string memory) 
   {
-  CharacterAttributes memory charAttributes = nftHolderAttributes[_tokenId];
+    CharacterAttributes memory charAttributes = nftHolderAttributes[_tokenId];
 
-  string memory strHp = Strings.toString(charAttributes.hp);
-  string memory strMaxHp = Strings.toString(charAttributes.maxHp);
-  string memory strAttackDamage = Strings.toString(charAttributes.attackDamage);
-  //string memory strDefaultAbility = charAttributes.defaultAbility;
-  
+    string memory strHp = Strings.toString(charAttributes.hp);
+    string memory strMaxHp = Strings.toString(charAttributes.maxHp);
+    string memory strAttackDamage = Strings.toString(charAttributes.attackDamage);
+    
+    
 
-  string memory json = Base64.encode(
-    bytes(
-      string(
-        abi.encodePacked(
-          '{"name": "',
-          charAttributes.name,
-          ' -- NFT #: ',
-          Strings.toString(_tokenId),
-          '", "description": "An epic NFT", "image": "ipfs://',
-          charAttributes.imageURI,
-          '", "attributes": [ { "trait_type": "Health Points", "value": ',strHp,', "max_value":',strMaxHp,'}, { "trait_type": "Attack Damage", "value": ', strAttackDamage,'}, { "trait_type": "Default Ability", "value": ',charAttributes.defaultAbility,'}, { "trait_type": "Ultimate Ability", "value": ',charAttributes.ultimateAbility,'} ]}'
-          
+    string memory json = Base64.encode(
+      bytes(
+        string(
+          abi.encodePacked(
+            '{"name": "',
+            charAttributes.name,
+            ' -- NFT #: ',
+            Strings.toString(_tokenId),
+            '", "description": "An epic NFT", "image": "ipfs://',
+            charAttributes.imageURI,
+            '", "attributes": [ { "trait_type": "Health Points", "value": ',strHp,', "max_value":',strMaxHp,'}, { "trait_type": "Attack Damage", "value": ', strAttackDamage,'} ]}'
+            
+          )
         )
       )
-    )
-  );
+    );
 
-  string memory output = string(
-    abi.encodePacked("data:application/json;base64,", json)
-  );
-  
-  return output;
+    string memory output = string(
+      abi.encodePacked("data:application/json;base64,", json)
+    );
+    
+    return output;
   }
 
   function attackBoss() public {
@@ -212,7 +221,7 @@ contract MyEpicGame is ERC721 {
     // Get the tokenId of the user's character NFT
     uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
 
-    //require(, "User does not own any Token");
+    
     if (nftTokenIdOfPlayer > 0) {
       return nftHolderAttributes[nftTokenIdOfPlayer];
     }
@@ -230,6 +239,7 @@ contract MyEpicGame is ERC721 {
   function getAllDefaultCharacters() public view returns (CharacterAttributes[] memory) {
     return defaultCharacters;
   }
+
 
   
 
