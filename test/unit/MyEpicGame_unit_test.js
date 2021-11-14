@@ -108,7 +108,7 @@ describe('MyEpicGame Unit Test', function () {
 
 
   // updateFee function with onlyOwner
-  it('check UpdateFee should only work with owner', async function() {
+  it('UpdateFee should only work with owner', async function() {
     
     
     expect(await myEpicContract.owner()).to.equal(owner.address);
@@ -118,7 +118,7 @@ describe('MyEpicGame Unit Test', function () {
   });
 
   // withdraw function with onlyOwner
-  it('check Withdraw should only work with owner', async function() {
+  it('Withdraw should only work with owner', async function() {
     
     
     expect(await myEpicContract.owner()).to.equal(owner.address);
@@ -155,5 +155,13 @@ describe('MyEpicGame Unit Test', function () {
     
   });
 
+  // checkIfUserHasNFT
+  it('Checking the Owners of NFT', async function() {
+    
+    await expect(myEpicContract.connect(owner).nftHolderAttributes(1)).to.not.be.reverted;
+    let result = await myEpicContract.connect(owner).nftHolderAttributes(1);
+    console.log(transformCharacterData(result));
+    
+  });
 
 });
