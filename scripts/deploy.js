@@ -2,9 +2,9 @@ const main = async () => {
   const gameContractFactory = await hre.ethers.getContractFactory('MyEpicGame');
   const gameContract = await gameContractFactory.deploy(
       ["Raze", "Phoenix", "Sage"],       // Names
-      ["QmRf7xG7Q1vKx7qFxM2DmainkEUwZbGx3tkLfvEGHcknGV", // Images
+      ["QmYGgUYWA8pNrjYopSD5yf4cVGNUibWSvg3hgC3RitF2qB", // Images
       "QmPWXBPUEoPkMX3fQtQY1Jwjkmn4p9qVdcMQvhy42wkqMD", 
-      "QmWY8zJdznEraEi6tQtgnWp9tevknqcmaam3BSFdVY8wBy"],
+      "QmbsoshH2rPYgEdSJZWHQBkHn9YSDSZVsKALgmVHSDK7LM"],
       [100, 200, 400],                    // HP values
       [100, 50, 25],                      // Attack damage values
       "Thanos: The Mad Titan", // Boss name
