@@ -15,7 +15,7 @@ const main = async () => {
     await gameContract.deployed();
     console.log("Contract deployed to:", gameContract.address);
 
-    
+    // Checking Github contributions commit
 
     // let txn;
     // txn = await gameContract.mintCharacterNFT(2);
