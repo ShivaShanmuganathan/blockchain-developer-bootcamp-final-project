@@ -22,7 +22,6 @@ import "hardhat/console.sol";
 /// @author Shiva Shanmuganathan
 /// @notice You can use this contract for implementing a simple NFT based game to change NFT Metadata
 /// @dev All function calls are currently implemented without side effects
-
 contract MyEpicGame is ERC721, Ownable{
 
   // We'll hold our character's attributes in a struct.   
@@ -147,6 +146,9 @@ contract MyEpicGame is ERC721, Ownable{
     (bool success, ) = msg.sender.call{value: address(this).balance}("");
     require(success, "Transfer failed.");
 
+    // address payable _owner = payable(owner());
+    // _owner.transfer(address(this).balance);
+
   }
 
 
@@ -182,6 +184,7 @@ contract MyEpicGame is ERC721, Ownable{
   /// @dev The tokenURI function is overridden to get character attributes and return the  json object as string
   /// @param _tokenId It is used to uniquely identify NFTs
   /// @return Returns the encoded json object as string
+  /// @inheritdoc ERC721
   function tokenURI(uint256 _tokenId) public view override returns (string memory) 
   {
     CharacterAttributes memory charAttributes = nftHolderAttributes[_tokenId];
@@ -327,7 +330,7 @@ contract MyEpicGame is ERC721, Ownable{
     return defaultCharacters;
 
   }
-  
+
 }
 
 

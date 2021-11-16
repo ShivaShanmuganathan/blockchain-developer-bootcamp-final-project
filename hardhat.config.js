@@ -9,6 +9,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   for (const account of accounts) {
     console.log(account.address);
   }
+  
 });
 
 // You need to export an object to set up your config
@@ -23,7 +24,9 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     rinkeby: {
       url: process.env.STAGING_ALCHEMY_KEY,
       accounts: [process.env.PRIVATE_KEY],
-    },
+    }, localhost: {
+      chainId: 31337
+    }
     
   },
 };

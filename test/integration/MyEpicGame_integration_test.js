@@ -139,7 +139,7 @@ describe('MyEpicGame Integration Test', function () {
 
     await expect(myEpicContract.connect(addr2).mintCharacterNFT(0, {value: ethers.utils.parseEther("0.1")})).to.be.reverted; 
     await expect(myEpicContract.connect(addr2).mintCharacterNFT(0, {value: ethers.utils.parseEther("0.2")})).to.not.be.reverted; 
-    
+
     await expect(myEpicContract.connect(addr1).withdraw()).to.be.reverted;
     await expect(myEpicContract.connect(owner).withdraw()).to.not.be.reverted;
 
