@@ -11,13 +11,21 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-// Access Control Functions
+// Access Control Function
 import "@openzeppelin/contracts/access/Ownable.sol";
+
+// Makes Debugging Easy
 import "hardhat/console.sol";
 
+
+// @title NFT Based Mini Game
+/// @author Shiva Shanmuganathan
+/// @notice You can use this contract for implementing a simple NFT based game to change NFT Metadata
+/// @dev All function calls are currently implemented without side effects
+
 contract MyEpicGame is ERC721, Ownable{
-  // We'll hold our character's attributes in a struct. Feel free to add
-  // whatever you'd like as an attribute! (ex. defense, crit chance, etc).
+
+  // We'll hold our character's attributes in a struct.   
   struct CharacterAttributes {
     uint characterIndex;
     string name;
@@ -28,16 +36,19 @@ contract MyEpicGame is ERC721, Ownable{
     
   }
 
+  // The tokenId is the NFTs unique identifier, it's just a number that goes
+  // 0, 1, 2, 3, etc.
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
-  // A lil array to help us hold the default data for our characters.
-  // This will be helpful when we mint new characters and need to know
-  // things like their HP, AD, etc.
+
+  // This array help us hold the default data for our characters.
+  // This will be helpful when we mint new characters and need to know things like their HP, AD, etc.
   CharacterAttributes[] defaultCharacters;
   
   // We create a mapping from the nft's tokenId => that NFTs attributes.
   mapping(uint256 => CharacterAttributes) public nftHolderAttributes;
 
+  // We create a struct to keep track of bigBoss's attributes
   struct BigBoss {
     string name;
     string imageURI;
@@ -46,21 +57,33 @@ contract MyEpicGame is ERC721, Ownable{
     uint attackDamage;
   }
 
+  // bigBoss is the Bad Guy that our Heroes Fight against
   BigBoss public bigBoss;
 
   // A mapping from an address => the NFTs tokenId. Gives me an ez way
   // to store the owner of the NFT and reference it later.
   mapping(address => uint256) public nftHolders;
   
+  // Events to show that a Minting & Attacking action has been completed 
   event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
   event AttackComplete(uint newBossHp, uint newPlayerHp);
 
-
+  // A fee to mint the Characterrs. 
   uint256 fee = 0.1 ether;
 
-  // Data passed in to the contract when it's first created initializing the characters.
+  // Data is passed in to the contract when it's first created initializing the characters.
   // We're going to actually pass these values in from from run.js.
   
+  /// @notice Constructor function initializes the Boss & DefaultCharacter's Attributes
+  /// @dev TokenId is incremented to 1, so that 0th Token can be assigned for users that sell their Token
+  /// @param characterNames -> Gets All Default Character's Names as string array
+  /// @param characterImageURIs -> Gets All Default Character's ImageURI as string array
+  /// @param characterHp -> Gets All Default Character's Health as uint array. 
+  /// @param characterAttackDmg-> Gets All Default Character's Attack Damage as uint array. 
+  /// @param bossName -> Gets Boss name as string
+  /// @param bossImageURI -> Gets Boss imageURI as string
+  /// @param bossHp -> Gets Boss Hp as uint
+  /// @param bossAttackDamage -> Gets Boss AttackDamage as uint
   constructor(
     // These new variables would be passed in via run.js or deploy.js.
     string[] memory characterNames,
@@ -74,7 +97,8 @@ contract MyEpicGame is ERC721, Ownable{
   )
   ERC721("Heroes", "HERO")
   {
-    // Initialize the boss. Save it to our global "bigBoss" state variable.
+
+    // Initialize the boss as our "bigBoss" state variable.
     bigBoss = BigBoss({
       name: bossName,
       imageURI: bossImageURI,
@@ -88,6 +112,7 @@ contract MyEpicGame is ERC721, Ownable{
     // Loop through all the characters, and save their values in our contract so
     // we can use them later when we mint our NFTs.
     for(uint i = 0; i < characterNames.length; i += 1) {
+
       defaultCharacters.push(CharacterAttributes({
         characterIndex: i,
         name: characterNames[i],
@@ -97,22 +122,37 @@ contract MyEpicGame is ERC721, Ownable{
         attackDamage: characterAttackDmg[i]
       }));
 
-      
     }
+    
     _tokenIds.increment();
+
   }
   
+  /// @notice Update Fee to mint the NFTs
+  /// @dev Only the contract owner will be able to update the minting fee
+  /// @param _fee The updated fee is passed by contract owner
+  /// Ownable is used to verify the contract owner
+
   function updateFee(uint256 _fee) external onlyOwner {
+
     fee = _fee;
+
   }
 
-  function withdraw() external payable onlyOwner {
-    address payable _owner = payable(owner());
-    _owner.transfer(address(this).balance);
+  /// @notice Withdraw function for contract owner to withdraw the funds
+  /// @dev call function is used to transfer balance over transfer function due to security reasons
+  /// Ownable is used to verify the contract owner
+  function withdraw() external onlyOwner {
+
+    (bool success, ) = msg.sender.call{value: address(this).balance}("");
+    require(success, "Transfer failed.");
+
   }
 
 
-
+  /// @notice Mints the NFT of the selected character
+  /// @dev The payable function requires users to pay the fee amount to mint the NFT. 
+  /// @param _characterIndex The index of the character the user chooses to Mint
   function mintCharacterNFT(uint _characterIndex) external payable{
     require(msg.value == fee);
     uint256 newItemId = _tokenIds.current();
@@ -138,7 +178,10 @@ contract MyEpicGame is ERC721, Ownable{
 
   }
 
-
+  /// @notice View Function that returns NFT Metadata of token as a string 
+  /// @dev The tokenURI function is overridden to get character attributes and return the  json object as string
+  /// @param _tokenId It is used to uniquely identify NFTs
+  /// @return Returns the encoded json object as string
   function tokenURI(uint256 _tokenId) public view override returns (string memory) 
   {
     CharacterAttributes memory charAttributes = nftHolderAttributes[_tokenId];
@@ -173,6 +216,12 @@ contract MyEpicGame is ERC721, Ownable{
     return output;
   }
 
+
+  
+  /// @notice User with NFT can attack the Boss [Metadata Of NFT Changes Here]
+  /// @dev The Health of Boss & User's NFT is reduced becuase of attack. [Metadata Of NFT Changes Here]
+  /// The user's address is used to get the NFT the user owns
+  /// Health of Boss & Hero is reduced due to fight  
   function attackBoss() public {
     // Get the state of the player's NFT.
     uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
@@ -208,7 +257,6 @@ contract MyEpicGame is ERC721, Ownable{
       // Console for ease.
     console.log("Boss attacked player. New player hp: %s\n", player.hp);
     emit AttackComplete(bigBoss.hp, player.hp);
-
   }
   
   //  function transferFrom(
@@ -234,15 +282,24 @@ contract MyEpicGame is ERC721, Ownable{
   //       nftHolders[to] = tokenId;
   //   }
 
+  // function stakeNFT(uint256 _tokenId) external {
+
+  // }
 
 
-  
+
+  /// @notice Function to check whether user owns an NFT
+  /// @dev If the user has NFTs, Struct with Attributes of NFTs is returned 
+  /// @dev If not, empty struct is returned when user does not have any NFTs
+  /// @return A struct containing the Token's Attributes are returned 
+  /// The address of message sender is used to get the tokenId
+  //// The tokenId is then used to get the attributes of NFT 
   function checkIfUserHasNFT() public view returns (CharacterAttributes memory) {
 
     // Get the tokenId of the user's character NFT
     uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
 
-    
+    // Using tokenId to get Token Attributes
     if (nftTokenIdOfPlayer > 0) {
       return nftHolderAttributes[nftTokenIdOfPlayer];
     }
@@ -253,15 +310,24 @@ contract MyEpicGame is ERC721, Ownable{
 
   }
   
-  
-
+  /// @notice View function to check the attributes of Boss
+  /// @dev public view function that returns attributes of boss as struct
+  /// @return A struct containing the attributes of Boss is returned
   function getBigBoss() public view returns (BigBoss memory) {
+    
     return bigBoss;
+
   }
 
+  /// @notice View function to get attributes of all default characters
+  /// @dev public view function that returns attributes of all default characters as struct
+  /// @return A struct containing the attributes of all default characters is returned
   function getAllDefaultCharacters() public view returns (CharacterAttributes[] memory) {
+
     return defaultCharacters;
+
   }
+  
 }
 
 
