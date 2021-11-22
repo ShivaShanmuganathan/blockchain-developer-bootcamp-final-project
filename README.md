@@ -1,16 +1,21 @@
-# Final Project - Dynamic NFT Mini Gam
+# Final Project - Dynamic NFT Mini Game
 
-## [Play On](https://nft-game-starter-project.shivashanmugana.repl.co/) -> https://nft-game-starter-project.shivashanmugana.repl.co/
+### [Play On](https://nftbattle.netlify.app/) -> https://nftbattle.netlify.app/
 
 ## Project Description
-### This is a NFT Based Mini Game that allows users to mint Valorant Heroes as an NFT.
-### Players can use their NFT to fight against Thanos. Battling against Thanos changes the HP (On-chain metadata) of NFT.
+
+### Fullstack Dapp Mini Game using Dynamic NFTs
+#### - Players can choose Valorant Heroes and mint them as an NFT
+#### - Use the minted Hero NFT to battle against Thanos in the dapp
+#### - Battling against Thanos changes the HP (On-Chain Metadata) of Hero NFT
 
 ## Directory Structure
 ### backend -> Contains Smart Contract & Testing Files 
 ### frontend -> Contains React Files
 
 ## How to run this project locally:
+
+`git clone https://github.com/ShivaShanmuganathan/blockchain-developer-bootcamp-final-project.git`
 
 ### Frontend
 
