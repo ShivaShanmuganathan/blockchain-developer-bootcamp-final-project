@@ -39,6 +39,7 @@ contract MyEpicGame is ERC721, Ownable{
   // 0, 1, 2, 3, etc.
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
+  uint256 public totalTokens;
 
   // This array help us hold the default data for our characters.
   // This will be helpful when we mint new characters and need to know things like their HP, AD, etc.
@@ -106,7 +107,7 @@ contract MyEpicGame is ERC721, Ownable{
       attackDamage: bossAttackDamage
     });
 
-    console.log("Done initializing BOSS %s w/ HP %s, img %s", bigBoss.name, bigBoss.hp, bigBoss.imageURI);
+    // console.log("Done initializing BOSS %s w/ HP %s, img %s", bigBoss.name, bigBoss.hp, bigBoss.imageURI);
 
     // Loop through all the characters, and save their values in our contract so
     // we can use them later when we mint our NFTs.
@@ -124,7 +125,6 @@ contract MyEpicGame is ERC721, Ownable{
     }
     
     _tokenIds.increment();
-
   }
   
   /// @notice Update Fee to mint the NFTs
@@ -174,8 +174,10 @@ contract MyEpicGame is ERC721, Ownable{
     console.log("Minted NFT w/ tokenId %s and characterIndex %s", newItemId, _characterIndex);  
 
     nftHolders[msg.sender] = newItemId;
+    totalTokens = newItemId;
 
     _tokenIds.increment();
+    
     emit CharacterNFTMinted(msg.sender, newItemId, _characterIndex);
 
   }
@@ -257,8 +259,9 @@ contract MyEpicGame is ERC721, Ownable{
       player.hp = player.hp - bigBoss.attackDamage;
     }
 
-      // Console for ease.
-    console.log("Boss attacked player. New player hp: %s\n", player.hp);
+    // Console for ease.
+    console.log("%s attacked Boss. Boss hp: %s\n", player.name, bigBoss.hp);
+    console.log("Boss attacked %s. %s hp: %s\n", player.name, player.name ,player.hp);
     emit AttackComplete(bigBoss.hp, player.hp);
   }
   

@@ -2,6 +2,9 @@ const { expect } = require('chai');
 var chai = require('chai');
 const BN = require('bn.js');
 chai.use(require('chai-bn')(BN));
+const { waffle } = require("hardhat");
+const provider = waffle.provider;
+
 
 const transformCharacterData = (characterData) => {
   return {
@@ -36,133 +39,229 @@ describe('MyEpicGame Unit Test', function () {
     await myEpicContract.deployed();
     
   });
+  
+  it('Checking Contract Owner using OpenZeppelin Ownable', async function() { 
 
-  // Testing Constructor & getBigBoss function 
-  it('Verifying BigBoss Details', async function () {
-
-    //console.log("Details of bigBoss:", await myEpicContract.getBigBoss());
-    
-    let bossTxn = await myEpicContract.getBigBoss();
-    let result = transformCharacterData(bossTxn);
-    
-    //console.log(typeof(result));
-    //console.log(result);
-    
-    expect(result.name).to.equal("Thanos: The Mad Titan");
-    expect((result.hp).toString()).to.equal("10000");
-    expect((result.maxHp).toString()).to.equal("10000");
-    expect((result.attackDamage).toString()).to.equal("50");
-  });
-
-
-  // Testing Constructor & getAllDefaultCharacters function 
-  it('Verifying Default Character Details', async function () {
-
-    const charactersTxn = await myEpicContract.getAllDefaultCharacters();
-    //console.log('charactersTxn:', charactersTxn);
-
-    const characters = charactersTxn.map((characterData) =>
-      transformCharacterData(characterData)
-    );
-    
-    characters.forEach((character, index) => {
-      
-      // console.log(index);
-      // console.log(character.name)
-      // console.log(character.hp)
-      // console.log(character.maxHp)
-      // console.log(character.attackDamage)
-
-      if(index == 0){
-        expect(character.name).to.equal("Raze");
-        expect((character.hp).toString()).to.equal("100");
-        expect((character.maxHp).toString()).to.equal("100");
-        expect((character.attackDamage).toString()).to.equal("100");
-      }
-      
-      else if(index == 1){
-        expect(character.name).to.equal("Phoenix");
-        expect((character.hp).toString()).to.equal("200");
-        expect((character.maxHp).toString()).to.equal("200");
-        expect((character.attackDamage).toString()).to.equal("50");
-      }
-
-      else if(index == 2){
-        expect(character.name).to.equal("Sage");
-        expect((character.hp).toString()).to.equal("400");
-        expect((character.maxHp).toString()).to.equal("400");
-        expect((character.attackDamage).toString()).to.equal("25");
-      }
-    })
-  });
-
-
-  // Minting Characters
-  it('Minting Characters', async function () {
-    
-    for (let i = 0; i < 3; i++) {
-      await expect(myEpicContract.connect(owner).mintCharacterNFT(i, {value: ethers.utils.parseEther("0.1")})).to.not.be.reverted; 
-    }
-
-  });
-
-
-  // updateFee function with onlyOwner
-  it('UpdateFee should only work with owner', async function() {
-    
-    
     expect(await myEpicContract.owner()).to.equal(owner.address);
-    await expect(myEpicContract.connect(addr1).updateFee(ethers.utils.parseEther("0.2"))).to.be.reverted;
-    await expect(myEpicContract.connect(owner).updateFee(ethers.utils.parseEther("0.2"))).to.not.be.reverted;
 
   });
 
-  // withdraw function with onlyOwner
-  it('Withdraw should only work with owner', async function() {
-    
-    
-    expect(await myEpicContract.owner()).to.equal(owner.address);
-    await expect(myEpicContract.connect(addr1).withdraw()).to.be.reverted;
-    //await expect(myEpicContract.connect(owner).withdraw()).to.not.be.reverted;
-    console.log("WITHDRAW FUNCTION TESTING" ,await expect(myEpicContract.connect(owner).withdraw()));
+  describe('Constructor()', function () {
+
+    // Testing Constructor & getBigBoss function 
+    it('Verifying BigBoss Details', async function () {
+
+        let bossTxn = await myEpicContract.getBigBoss();
+        let result = transformCharacterData(bossTxn);
+                
+        expect(result.name).to.equal("Thanos: The Mad Titan");
+        expect((result.hp).toString()).to.equal("10000");
+        expect((result.maxHp).toString()).to.equal("10000");
+        expect((result.attackDamage).toString()).to.equal("50");
+
+    });
+
+
+    // Testing Constructor & getAllDefaultCharacters function 
+    it('Verifying Default Character Details', async function () {
+
+        const charactersTxn = await myEpicContract.getAllDefaultCharacters();
+        const characters = charactersTxn.map((characterData) => transformCharacterData(characterData));
+        characters.forEach((character, index) => {
+        
+          if(index == 0){
+              expect(character.name).to.equal("Raze");
+              expect((character.hp).toString()).to.equal("100");
+              expect((character.maxHp).toString()).to.equal("100");
+              expect((character.attackDamage).toString()).to.equal("100");
+          }
+          
+          else if(index == 1){
+              expect(character.name).to.equal("Phoenix");
+              expect((character.hp).toString()).to.equal("200");
+              expect((character.maxHp).toString()).to.equal("200");
+              expect((character.attackDamage).toString()).to.equal("50");
+          }
+
+          else if(index == 2){
+              expect(character.name).to.equal("Sage");
+              expect((character.hp).toString()).to.equal("400");
+              expect((character.maxHp).toString()).to.equal("400");
+              expect((character.attackDamage).toString()).to.equal("25");
+          }
+        });
+    });
+  });
+  
+  describe('mintCharacterNFT()', function () { 
+
+    // Minting Characters
+    it('Should Mint Characters', async function () {
+        
+        for (let i = 0; i < 3; i++) {
+          await expect(myEpicContract.connect(owner).mintCharacterNFT(i, {value: ethers.utils.parseEther("0.1")})).to.not.be.reverted; 
+        }
+
+    });
+
+    it('Should Fail To Mint If Amount Is Not Exact', async function () {
+      
+      await expect(myEpicContract.connect(addr1).mintCharacterNFT(0, {value: ethers.utils.parseEther("0.2")})).to.be.reverted; 
+      await expect(myEpicContract.connect(addr1).mintCharacterNFT(0, {value: ethers.utils.parseEther("0.05")})).to.be.reverted; 
+
+    });
+
+
+  });
+  
+  
+  describe('updateFee()', function () { 
+
+    // updateFee function can be used only by contract owner
+    it('should fail since fee can only be updated by owner', async function() {
+        
+        await expect(myEpicContract.connect(addr1).updateFee(ethers.utils.parseEther("0.2"))).to.be.reverted;
+
+    });
+
+    it('should allow only the owner to update fee', async function() {
+      
+        await expect(myEpicContract.connect(owner).updateFee(ethers.utils.parseEther("0.2"))).to.not.be.reverted;
+
+    });
+
+  });
+  
+  describe('Withdraw()', function () { 
+
+    // withdraw function with onlyOwner
+    it('should fail since withdraw can only be called by owner', async function() { 
+      
+      await expect(myEpicContract.connect(addr1).withdraw()).to.be.reverted;
+
+    });
+
+
+    it('Withdraw should only work with owner and balance after withdrawal must be higher', async function() {
+            
+      //await expect(myEpicContract.connect(addr1).mintCharacterNFT(0, {value: ethers.utils.parseEther("0.1")})).to.not.be.reverted; 
+      const balanceBefore = await ethers.provider.getBalance(owner.address);
+      //console.log(ethers.utils.formatEther(balanceBefore));
+  
+      await expect(myEpicContract.connect(owner).withdraw()).to.not.be.reverted;
+  
+      const balanceAfter = await ethers.provider.getBalance(owner.address);
+      //console.log(ethers.utils.formatEther(balanceAfter));
+      expect(balanceAfter.gt(balanceBefore), 'Balance is not higher').to.be.true;
+        
+    });
+
+  });
+  
+  describe('TokenURI()', function () { 
+
+    // tokenURI function can be checked with maxHp, attackDamage
+    it('check TokenURI', async function() {
+        
+        let tokenURI = await expect(myEpicContract.connect(addr1).tokenURI(1)).to.not.be.reverted;
+        // let nftAttributes = await (myEpicContract.connect(addr1).nftHolderAttributes(1));
+        // console.log(nftAttributes);
+
+    });
 
   });
 
+  
+  describe('Attack Boss()', function () { 
 
-  // tokenURI function can be checked with maxHp, attackDamage
-  it('check TokenURI', async function() {
-    
-    let tokenURI = await expect(myEpicContract.connect(addr1).tokenURI(1)).to.not.be.reverted;
-    // let nftAttributes = await (myEpicContract.connect(addr1).nftHolderAttributes(1));
-    // console.log(nftAttributes);
+    // fail since account has not an NFT
+    it('should fail to attack boss since account does not have an NFT  ', async function() {
+      
+      await expect(myEpicContract.connect(addr2).attackBoss()).to.be.reverted;
+
+    });
+
+    // attackBoss after minting NFT
+    it('should attack boss', async function() {
+
+      // await expect(myEpicContract.connect(owner).mintCharacterNFT(0, {value: ethers.utils.parseEther("0.1")})).to.not.be.reverted; 
+      await expect(myEpicContract.connect(owner).attackBoss()).to.not.be.reverted;
+
+    });
+
+    // attackBoss & check Stats
+    it('should mint NFT & Attacks Boss, Both Boss & Player incur damages', async function() {
+      
+      await expect(myEpicContract.connect(addr1).mintCharacterNFT(0, {value: ethers.utils.parseEther("0.2")})).to.not.be.reverted; 
+
+      // Player1 Stats before Attack
+      let player1_token = await myEpicContract.connect(addr1).nftHolders(addr1.address);
+      let player1_char_beforeAttack = await myEpicContract.connect(addr1).nftHolderAttributes(player1_token);
+      let player1_hp = transformCharacterData(player1_char_beforeAttack).hp;
+      let player1_attack = transformCharacterData(player1_char_beforeAttack).attackDamage;
+      
+      // Boss Stats After Attack
+      let beforeAttackBossTxn = await myEpicContract.getBigBoss();
+      let beforeAttackResult = transformCharacterData(beforeAttackBossTxn);
+      let bossHp = beforeAttackResult.hp;
+      let boss_attack = beforeAttackResult.attackDamage;
+
+      // ATTACK NOW!
+      await expect(myEpicContract.connect(addr1).attackBoss()).to.not.be.reverted;
+
+      //Check Player Hp After Attack
+      let player1_char_afterAttack = await myEpicContract.connect(addr1).nftHolderAttributes(player1_token);
+      let player1_hp_afterAttack = transformCharacterData(player1_char_afterAttack).hp;
+      expect(player1_hp_afterAttack).to.equal(player1_hp - boss_attack);
+
+      // Check Boss Hp
+      let bossTxn = await myEpicContract.getBigBoss();
+      let result = transformCharacterData(bossTxn).hp;
+      expect(result).to.equal(bossHp - player1_attack);
+      
+      });
 
   });
 
+  
+  describe('checkIfUserHasNFT()', function () { 
 
-  // attackBoss - no return, but can be checked along with getBoss
-  it('Attack Boss', async function() {
-    
-    await expect(myEpicContract.connect(owner).attackBoss()).to.not.be.reverted;
-    await expect(myEpicContract.connect(addr2).attackBoss()).to.be.reverted;
+    // checkIfUserHasNFT
+    it('should check if user has NFT', async function() {
+        
+        let result = await myEpicContract.connect(owner).checkIfUserHasNFT();
+        expect((result.name).toString()).to.not.be.equal('');
+
+    });
+
+    // checkIfUserHasNFT
+    it('should fail since user does not have NFT', async function() {
+        
+      let result = await myEpicContract.connect(addr2).checkIfUserHasNFT();
+      expect((result.name).toString()).to.be.equal('');
+
+    });
 
   });
+  
+  describe('checkNFTOwner()', function () { 
+      // check owner of NFT
+    it('Checking the Owners of NFT', async function() {
+        
+        let totalTokens = (await myEpicContract.totalTokens()).toNumber();
+        let ownersList = [];
+        console.log(totalTokens);
+        for (let i = 1; i <= totalTokens; i++) {
+          ownersList.push(await myEpicContract.ownerOf(i)); 
+        }
+        
+        ownersList.forEach((element) => {
+          console.log(element);
+        });
+        
+    });
 
-  // checkIfUserHasNFT
-  it('Checking If User has NFT', async function() {
-    
-    await expect(myEpicContract.connect(owner).checkIfUserHasNFT()).to.not.be.reverted;
-    let result = await myEpicContract.connect(addr2).checkIfUserHasNFT();
-    expect((result.name).toString()).to.equal('');
-    
+
   });
-
-  // checkIfUserHasNFT
-  it('Checking the Owners of NFT', async function() {
-    
-    await expect(myEpicContract.connect(owner).nftHolderAttributes(1)).to.not.be.reverted;
-    let result = await myEpicContract.connect(owner).nftHolderAttributes(1);
-    console.log(transformCharacterData(result));
-    
-  });
-
+  
 });
