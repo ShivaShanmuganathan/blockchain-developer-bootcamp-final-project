@@ -10,8 +10,9 @@
 - Battling against Thanos changes the HP (On-Chain Metadata) of Hero NFT
 
 ## Directory Structure
-- backend ⏩ Contains Smart Contract & Testing Files 
-- frontend ⏩ Contains React Files
+- `backend` ⏩ Smart contracts that are deployed in the Rinkeby test network.
+- `frontend` ⏩ Project's React frontend.
+- `backend/test` ⏩ Tests for Smart Contracts.
 
 ## How to run this project locally:
 
@@ -37,6 +38,7 @@ git clone https://github.com/ShivaShanmuganathan/blockchain-developer-bootcamp-f
 ### Environment variables (not needed for running project locally)
 
 - Change filename `.env.example` to `.env`
+- Get the ALCHEMY KEY for `RINKEBY NETWORK` and `PRIVATE_KEY` from MetaMask
 - Add `STAGING_ALCHEMY_KEY` & `PRIVATE_KEY` to `.env` 
 
 ```
@@ -73,3 +75,10 @@ PRIVATE_KEY=
 - Change `50` to edit the Boss Attack Damage
 
 
+## Screencast link
+
+
+
+## Public Ethereum wallet for certification:
+
+`0xadf2228d5bb78f8257d2480af7bff70d0cb9e6a0`
