@@ -34,7 +34,17 @@ git clone https://github.com/ShivaShanmuganathan/blockchain-developer-bootcamp-f
 - `npx hardhat test`
 - `npx hardhat run scripts/deploy.js`
 
-### How to make your own hero characters and deploy contract
+### Environment variables (not needed for running project locally)
+
+- Change filename `.env.example` to `.env`
+- Add `STAGING_ALCHEMY_KEY` & `PRIVATE_KEY` to `.env` 
+
+```
+STAGING_ALCHEMY_KEY=
+PRIVATE_KEY=
+```
+
+### How to make your own hero characters
 
 - Open `scripts/deploy.js` in `backend` folder
 - This is the code you need to edit to make your own heroes <br /> `const gameContract = await gameContractFactory.deploy( 
