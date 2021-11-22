@@ -144,7 +144,6 @@ describe('MyEpicGame Unit Test', function () {
 
     it('Withdraw should only work with owner and balance after withdrawal must be higher', async function() {
             
-      //await expect(myEpicContract.connect(addr1).mintCharacterNFT(0, {value: ethers.utils.parseEther("0.1")})).to.not.be.reverted; 
       const balanceBefore = await ethers.provider.getBalance(owner.address);
       //console.log(ethers.utils.formatEther(balanceBefore));
   
@@ -245,7 +244,8 @@ describe('MyEpicGame Unit Test', function () {
   });
   
   describe('checkNFTOwner()', function () { 
-      // check owner of NFT
+    
+    // check owner of NFT
     it('Checking the Owners of NFT', async function() {
         
         let totalTokens = (await myEpicContract.totalTokens()).toNumber();
