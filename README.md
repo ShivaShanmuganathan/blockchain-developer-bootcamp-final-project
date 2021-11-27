@@ -10,7 +10,7 @@
 - Battling against Thanos changes the HP (On-Chain Metadata) of Hero NFT
 
 ## Directory Structure
-- `backend` ⏩ Smart contracts that are deployed in the Rinkeby test network.
+- `backend/contracts` ⏩ Smart contracts that are deployed in the Rinkeby test network.
 - `frontend` ⏩ Project's React frontend.
 - `backend/test` ⏩ Tests for Smart Contracts.
 
@@ -77,7 +77,7 @@ PRIVATE_KEY=
 
 ## Screencast link
 
-
+[Video Link](https://www.loom.com/share/8f68f312c12046acb23962dca11fbd8a)
 
 ## Public Ethereum wallet for certification:
 
