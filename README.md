@@ -4,13 +4,15 @@
 
 ## Project Description
 
-### Fullstack Dapp Mini Game using Dynamic NFTs
+### Fullstack Dapp Mini Game using Dynamic 
+
+- Player can connect to the mini game using Metamask on Rinkeby Network
 - Players can choose Valorant Heroes and mint them as an NFT
 - Use the minted Hero NFT to battle against Thanos in the dapp
 - Battling against Thanos changes the HP (On-Chain Metadata) of Hero NFT
 
 ## Directory Structure
-- `backend/contracts` ⏩ Smart contracts that are deployed in the Rinkeby test network.
+- `backend/contracts` ⏩ Smart Contract Code [Deployed in the Rinkeby test network]
 - `frontend` ⏩ Project's React frontend.
 - `backend/test` ⏩ Tests for Smart Contracts.
 
@@ -23,23 +25,32 @@ git clone https://github.com/ShivaShanmuganathan/blockchain-developer-bootcamp-f
 ### Frontend
 
 - `cd frontend`
-- `npm install`
-- `npm start`
-- Open `http://localhost:3000`
+- `npm install` Install Dependencies
+- `npm start` Start the frontend in localhost 
+- Open `http://localhost:3000` <br />
+We can use the localhost frontend to interact with the smart contract on rinkeby
 
 ### Backend
 
 - `cd backend`
-- `npm install`
-- `npx hardhat compile`
-- `npx hardhat test`
-- `npx hardhat run scripts/deploy.js`
+- `npm install` Install Dependencies
+- `npx hardhat --version` Check if Hardhat is properly installed 
+- `npx hardhat compile` Compile the Smart Contract
+- `npx hardhat test` Test the Smart Contract Locally
+- `npx hardhat run scripts/deploy.js` Deploy the Smart Contract Locally
 
-### Environment variables (not needed for running project locally)
+### If you want to deploy it on Rinkeby Network
 
-- Change filename `.env.example` to `.env`
-- Get the ALCHEMY KEY for `RINKEBY NETWORK` and `PRIVATE_KEY` from MetaMask
-- Add `STAGING_ALCHEMY_KEY` & `PRIVATE_KEY` to `.env` 
+1. open `hardhat.config.js` file and uncomment the below lines <br />
+    // rinkeby: { <br />
+    //   url: process.env.STAGING_ALCHEMY_KEY, <br />
+    //   accounts: [process.env.PRIVATE_KEY], <br />
+    // }, <br />
+2. change filename `.env.example` to `.env`
+3. Get Alchemy Key for Rinkeby Network from Alchemy, and assign it to `STAGING_ALCHEMY_KEY` in `.env`
+4. Get `PRIVATE_KEY` from MetaMask, and assign it to `PRIVATE_KEY` in `.env`
+5. RUN `npx hardhat run scripts/deploy.js --network rinkeby` to deploy your contract to the Rinkeby Network. 
+
 
 ```
 STAGING_ALCHEMY_KEY=
@@ -75,7 +86,7 @@ PRIVATE_KEY=
 - Change `50` to edit the Boss Attack Damage
 
 
-## Screencast link
+## [Project Walkthrough Video](https://www.loom.com/share/8f68f312c12046acb23962dca11fbd8a) 
 
 [Video Link](https://www.loom.com/share/8f68f312c12046acb23962dca11fbd8a)
 

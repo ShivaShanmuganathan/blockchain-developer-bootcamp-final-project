@@ -1,0 +1,2 @@
+contract address = 0x24141eeEDDCB3A479599421f15Bc0245d47F7351
+network = RINKEBY
