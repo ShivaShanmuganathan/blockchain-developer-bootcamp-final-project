@@ -1,28 +1,28 @@
-# Final Project - Dynamic NFT Mini Game
+# Final Project - 🎮 Dynamic NFT Mini Game 🕹
 
-### [Play On](https://nftbattle.netlify.app/) ⏩ https://nftbattle.netlify.app/
+### [Play On 🎮](https://nftbattle.netlify.app/) ⏩ https://nftbattle.netlify.app/
 
-## Project Description
+## Project Description 📝
 
-### Fullstack Dapp Mini Game using Dynamic 
+### Fullstack Dapp Mini Game using Dynamic NFTs 🎟
 
 - Player can connect to the mini game using Metamask on Rinkeby Network
 - Players can choose Valorant Heroes and mint them as an NFT
 - Use the minted Hero NFT to battle against Thanos in the dapp
 - Battling against Thanos changes the HP (On-Chain Metadata) of Hero NFT
 
-## Directory Structure
+## Directory Structure 📂
 - `backend/contracts` ⏩ Smart Contract Code [Deployed in the Rinkeby test network]
 - `frontend` ⏩ Project's React frontend.
 - `backend/test` ⏩ Tests for Smart Contracts.
 
-## How to run this project locally:
+## Run this project locally 🏃🏾‍♂️💨
 
 ```shell
 git clone https://github.com/ShivaShanmuganathan/blockchain-developer-bootcamp-final-project.git
 ```
 
-### Frontend
+### Frontend 🎨🖌
 
 - `cd frontend`
 - `npm install` Install Dependencies
@@ -30,7 +30,7 @@ git clone https://github.com/ShivaShanmuganathan/blockchain-developer-bootcamp-f
 - Open `http://localhost:3000` <br />
 We can use the localhost frontend to interact with the smart contract on rinkeby
 
-### Backend
+### Backend 🔗
 
 - `cd backend`
 - `npm install` Install Dependencies
@@ -85,10 +85,18 @@ PRIVATE_KEY=
 - Change `10000` to edit the Boss Health
 - Change `50` to edit the Boss Attack Damage
 
+## Gas Report ⛽
+![gasReport](./gas-report.JPG)
+
+## Test Coverage Report 🛸
+![testReport](./test-coverage-report.JPG)
 
 ## [Project Walkthrough Video](https://www.loom.com/share/8f68f312c12046acb23962dca11fbd8a) 
 
 [Video Link](https://www.loom.com/share/8f68f312c12046acb23962dca11fbd8a)
+
+
+
 
 ## Public Ethereum wallet for certification:
 

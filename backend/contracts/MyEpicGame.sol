@@ -6,7 +6,6 @@ import "./libraries/Base64.sol";
 
 // NFT contract to inherit from.
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-
 // Helper functions OpenZeppelin provides.
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
@@ -146,9 +145,6 @@ contract MyEpicGame is ERC721, Ownable{
     (bool success, ) = msg.sender.call{value: address(this).balance}("");
     require(success, "Transfer failed.");
 
-    // address payable _owner = payable(owner());
-    // _owner.transfer(address(this).balance);
-
   }
 
 
@@ -162,6 +158,7 @@ contract MyEpicGame is ERC721, Ownable{
     _safeMint (msg.sender, newItemId);
 
     nftHolderAttributes[newItemId] = CharacterAttributes({
+      
       characterIndex: _characterIndex,
       name: defaultCharacters[_characterIndex].name,
       imageURI: defaultCharacters[_characterIndex].imageURI,
@@ -276,6 +273,7 @@ contract MyEpicGame is ERC721, Ownable{
   //       delete nftHolders[msg.sender];
   //       nftHolders[to] = tokenId;
   //   }
+
     
     
   //   function safeTransferFrom(

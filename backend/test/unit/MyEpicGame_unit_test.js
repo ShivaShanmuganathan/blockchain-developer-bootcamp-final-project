@@ -1,10 +1,4 @@
 const { expect } = require('chai');
-var chai = require('chai');
-const BN = require('bn.js');
-chai.use(require('chai-bn')(BN));
-const { waffle } = require("hardhat");
-const provider = waffle.provider;
-
 
 const transformCharacterData = (characterData) => {
   return {
@@ -164,7 +158,7 @@ describe('MyEpicGame Unit Test', function () {
         
         let tokenURI = await expect(myEpicContract.connect(addr1).tokenURI(1)).to.not.be.reverted;
         // let nftAttributes = await (myEpicContract.connect(addr1).nftHolderAttributes(1));
-        // console.log(nftAttributes);
+        console.log(tokenURI);
 
     });
 
@@ -235,7 +229,7 @@ describe('MyEpicGame Unit Test', function () {
 
     // checkIfUserHasNFT
     it('should fail since user does not have NFT', async function() {
-        
+
       let result = await myEpicContract.connect(addr2).checkIfUserHasNFT();
       expect((result.name).toString()).to.be.equal('');
 
