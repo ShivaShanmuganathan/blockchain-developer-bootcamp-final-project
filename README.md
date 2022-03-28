@@ -91,13 +91,10 @@ PRIVATE_KEY=
 ## Test Coverage Report 🛸
 ![testReport](./test-coverage-report.JPG)
 
-## [Project Walkthrough Video](https://www.loom.com/share/8f68f312c12046acb23962dca11fbd8a) 
+## [Project Walkthrough Video 🎥](https://www.loom.com/share/8f68f312c12046acb23962dca11fbd8a) 
 
 [Video Link](https://www.loom.com/share/8f68f312c12046acb23962dca11fbd8a)
 
-
-
-
-## Public Ethereum wallet for certification:
+## Public Ethereum Wallet For Certification 🎓
 
 `0xadf2228d5bb78f8257d2480af7bff70d0cb9e6a0`
